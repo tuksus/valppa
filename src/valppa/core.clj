@@ -14,14 +14,17 @@
 (defn foo
   "aloittelua"
   [x]
-  (let [asiakkaat (slurp "resources/test.csv" )
-          csv (csv/parse-csv asiakkaat :delimiter \;)
-          mappifyed (sc/mappify csv)
-          renamed (map #(clojure.set/rename-keys %1 {(keyword "Käyttöönottokoulutus pvm") :kasg}) mappifyed)
-          ;empty-vals-removed (map remove-blank-values-from-map renamed)
-          merged (map #(merge defaults %1) renamed)
-          vectorised (vectorize merged)
-          new-csv (csv/write-csv vectorised :delimiter \;)
-          ]
-    (clojure.pprint/pprint new-csv)
-      ))
+  (let [source (slurp "source.csv" )
+        csv (csv/parse-csv source :delimiter \;)
+        mappifyed (sc/mappify csv)
+        _ (clojure.pprint/pprint mappifyed)
+        renamed (map #(clojure.set/rename-keys %1 {(keyword "paiva") :date}) mappifyed)
+        ;empty-vals-removed (map remove-blank-values-from-map renamed)
+        merged (map #(merge defaults %1) renamed)
+        vectorised (vectorize merged)
+        new-csv (csv/write-csv vectorised :delimiter \;)
+        ]
+    (print new-csv)
+    ))
+
+(foo 1)
