@@ -6,10 +6,6 @@
 (defn remove-blank-values-from-map [m]
   (into {} (filter (comp not clojure.string/blank? second) m)))
 
-(def defaults
-  {:Tuotannossa "0"
-   :hoponlopo "ASDFA"})
-
 (defn get-schema [file]
   (let [schema (rest (csv/parse-csv (slurp file) :delimiter \;))]
     (map #(remove-blank-values-from-map (zipmap [:column :source-column :default :type] %1)) schema))
@@ -29,25 +25,11 @@
         csv (csv/parse-csv source :delimiter \;)
         mappifyed (sc/mappify csv)
         schema (get-schema schema-file)
-        converted (map #(convert-row schema %1) mappifyed)]
-    converted
-    ))
-
-
-(defn foo
-  "aloittelua"
-  [x]
-  (let [source (slurp "source.csv" )
-        csv (csv/parse-csv source :delimiter \;)
-        mappifyed (sc/mappify csv)
-        _ (clojure.pprint/pprint mappifyed)
-        renamed (map #(clojure.set/rename-keys %1 {(keyword "paiva") :date}) mappifyed)
-        ;empty-vals-removed (map remove-blank-values-from-map renamed)
-        merged (map #(merge defaults %1) renamed)
-        vectorised (vectorize merged)
-        new-csv (csv/write-csv vectorised :delimiter \;)
-        ]
-    (print new-csv)
+        converted (map #(convert-row schema %1) mappifyed)
+        vectorised (vectorize converted)
+        new-csv (csv/write-csv vectorised :delimiter \;)]
+    
+      (spit target-file new-csv) 
     ))
 
 (convert "source.csv" "schema.csv" "target.csv")
