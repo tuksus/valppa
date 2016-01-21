@@ -26,10 +26,13 @@
         mappifyed (sc/mappify csv)
         schema (get-schema schema-file)
         converted (map #(convert-row schema %1) mappifyed)
-        vectorised (vectorize converted)
+        header (map #(keyword (:column %1)) schema)
+        vectorised (vectorize {:header header} converted )
         new-csv (csv/write-csv vectorised :delimiter \;)]
     
       (spit target-file new-csv) 
     ))
+(defn -main [& args]
+  (convert "source.csv" "schema.csv" "target.csv")
+  )
 
-(convert "source.csv" "schema.csv" "target.csv")

@@ -1,3 +1,4 @@
-id;nimi;paiva
-1;Tero;20160120
-2;Kari;20160121
+id;nimi;paiva;turha
+1;Tero;20160120;a
+2;Kari;20160121;b
+3;;20160130;c
